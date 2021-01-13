@@ -62,13 +62,7 @@ namespace ApiTestProject.UnitTests
             _request = new HttpRequestMessage(HttpMethod.Put, string.Format(EndPoints.UserById, user.Id));
             _request.Headers.Add("Authorization", Token);
 
-            var updatedUser = new User()
-            {
-                Name = user.Name,
-                Gender = user.Gender,
-                Email = user.Email,
-                Status = inputNewStatus
-            };
+            var updatedUser = new User() {Name = user.Name, Gender = user.Gender, Email = user.Email, Status = inputNewStatus};
             var json = JsonConvert.SerializeObject(updatedUser);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
             _request.Content = data;
