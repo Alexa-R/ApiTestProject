@@ -33,8 +33,8 @@ namespace ApiTestProject.UnitTests
             _client.Dispose();
         }
 
-        [Theory]
-        [InlineData("Elena", "Female", "Elena@mail.ru", "Active")]
+        //[Theory]
+        //[InlineData("Sanchas", "Female", "Sanchas@mail.ru", "Active")]
         public void CreateUserTest(string inputName, string inputGender, string inputEmail, string inputStatus)
         {
             _request = new HttpRequestMessage(HttpMethod.Post, EndPoints.UserAll);
@@ -54,14 +54,15 @@ namespace ApiTestProject.UnitTests
             DeleteUser(jsonRootObject.Data.Id);
         }
 
-        [Theory]
-        [InlineData("Inactive")]
-        public void UpdateUserTest(string inputNewStatus)
+        [Fact]
+        public void UpdateUserTest()
         {
             _user = CreateUser();
 
             _request = new HttpRequestMessage(HttpMethod.Put, string.Format(EndPoints.UserById, _user.Id));
             _request.Headers.Add("Authorization", Token);
+
+            var inputNewStatus = "Inactive";
 
             var updatedUser = new User() {Name = _user.Name, Gender = _user.Gender, Email = _user.Email, Status = inputNewStatus};
             var json = JsonConvert.SerializeObject(updatedUser);
@@ -118,10 +119,11 @@ namespace ApiTestProject.UnitTests
             DeleteUser(_user.Id);
         }
 
-        [Theory]
-        [InlineData(1234567890)]
-        public void GetUserByFakeIdTest(int id)
+        [Fact]
+        public void GetUserByFakeIdTest()
         {
+            var id = 1234567890;
+
             _httpResponse = _client.GetAsync(string.Format(EndPoints.UserById, id));
             var responseData = _httpResponse.Result.Content.ReadAsStringAsync().Result;
 
@@ -135,11 +137,15 @@ namespace ApiTestProject.UnitTests
             Assert.Equal(404, jsonRootObject.Code);
         }
 
-        [Theory]
-        [InlineData("Vika", "Male", "Vika@mail.ru", "Active")]
-        public void CreateUserWithoutTokenTest(string inputName, string inputGender, string inputEmail, string inputStatus)
+        [Fact]
+        public void CreateUserWithoutTokenTest()
         {
             _request = new HttpRequestMessage(HttpMethod.Post, EndPoints.UserAll);
+
+            var inputName = "Vika";
+            var inputGender = "Female";
+            var inputEmail = "Vika@mail.ru";
+            var inputStatus = "Active";
 
             _user = new User {Name = inputName, Gender = inputGender, Email = inputEmail, Status = inputStatus};
             var json = JsonConvert.SerializeObject(_user);

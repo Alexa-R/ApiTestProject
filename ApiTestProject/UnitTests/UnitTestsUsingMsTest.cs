@@ -30,17 +30,18 @@ namespace ApiTestProject.UnitTests
             {
                 DeleteUser(_user.Id);
             }
+            
             _client.Dispose();
         }
 
-        [DataTestMethod]
-        [DataRow("Elena", "Female", "Elena@mail.ru", "Active")]
+        //[DataTestMethod]
+        //[DataRow("Sanch", "Female", "Sanch@mail.ru", "Active")]
         public void CreateUserTest(string inputName, string inputGender, string inputEmail, string inputStatus)
         {
             _request = new HttpRequestMessage(HttpMethod.Post, EndPoints.UserAll);
             _request.Headers.Add("Authorization", Token);
-            
-            _user = new User {Name = inputName, Gender = inputGender, Email = inputEmail, Status = inputStatus};
+
+            _user = new User { Name = inputName, Gender = inputGender, Email = inputEmail, Status = inputStatus };
             var json = JsonConvert.SerializeObject(_user);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
             _request.Content = data;
@@ -53,18 +54,17 @@ namespace ApiTestProject.UnitTests
                     .Result);
 
             Assert.AreEqual(201, jsonRootObject.Code);
-
-            DeleteUser(jsonRootObject.Data.Id);
         }
 
-        [DataTestMethod]
-        [DataRow("Inactive")]
-        public void UpdateUserTest(string inputNewStatus)
+        [TestMethod]
+        public void UpdateUserTest()
         {
             _user = CreateUser();
 
             _request = new HttpRequestMessage(HttpMethod.Put, string.Format(EndPoints.UserById, _user.Id));
             _request.Headers.Add("Authorization", Token);
+
+            var inputNewStatus = "Inactive";
 
             var updatedUser = new User() {Name = _user.Name, Gender = _user.Gender, Email = _user.Email, Status = inputNewStatus};
             var json = JsonConvert.SerializeObject(updatedUser);
@@ -79,8 +79,6 @@ namespace ApiTestProject.UnitTests
                     .Result);
 
             Assert.AreEqual(200, jsonRootObject.Code);
-
-            DeleteUser(_user.Id);
         }
 
         [TestMethod]
@@ -117,14 +115,13 @@ namespace ApiTestProject.UnitTests
             Console.WriteLine(responseData);
 
             Assert.AreEqual(200, jsonRootObject.Code);
-
-            DeleteUser(_user.Id);
         }
 
-        [DataTestMethod]
-        [DataRow(1234567890)]
-        public void GetUserByFakeIdTest(int id)
+        [TestMethod]
+        public void GetUserByFakeIdTest()
         {
+            var id = 1234567890;
+
             _httpResponse = _client.GetAsync(string.Format(EndPoints.UserById, id));
             var responseData = _httpResponse.Result.Content.ReadAsStringAsync().Result;
 
@@ -138,11 +135,15 @@ namespace ApiTestProject.UnitTests
             Assert.AreEqual(404, jsonRootObject.Code);
         }
 
-        [DataTestMethod]
-        [DataRow("Vika", "Male", "Vika@mail.ru", "Active")]
-        public void CreateUserWithoutTokenTest(string inputName, string inputGender, string inputEmail, string inputStatus)
+        [TestMethod]
+        public void CreateUserWithoutTokenTest()
         {
             _request = new HttpRequestMessage(HttpMethod.Post, EndPoints.UserAll);
+
+            var inputName = "Vika";
+            var inputGender = "Female";
+            var inputEmail = "Vika@mail.ru";
+            var inputStatus = "Active";
 
             _user = new User {Name = inputName, Gender = inputGender, Email = inputEmail, Status = inputStatus};
             var json = JsonConvert.SerializeObject(_user);
