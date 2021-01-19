@@ -135,8 +135,7 @@ namespace ApiTestProject.UnitTests
 
         [Test]
         [TestCase("Vika", "Male", "Vika@mail.ru", "Active")]
-        public void CreateUserWithoutTokenTest(string inputName, string inputGender, string inputEmail,
-            string inputStatus)
+        public void CreateUserWithoutTokenTest(string inputName, string inputGender, string inputEmail, string inputStatus)
         {
             _request = new HttpRequestMessage(HttpMethod.Post, EndPoints.UserAll);
 
@@ -177,7 +176,7 @@ namespace ApiTestProject.UnitTests
             return jsonRootObject.Data;
         }
 
-        private User DeleteUser(int id)
+        private void DeleteUser(int id)
         {
             _request = new HttpRequestMessage(HttpMethod.Delete, string.Format(EndPoints.UserById, id));
             _request.Headers.Add("Authorization", Token);
@@ -187,8 +186,6 @@ namespace ApiTestProject.UnitTests
                 JsonConvert.DeserializeObject<JsonRootObjectWithOneUser>(_httpResponse.Result.Content
                     .ReadAsStringAsync()
                     .Result);
-
-            return jsonRootObject.Data;
         }
     }
 }
