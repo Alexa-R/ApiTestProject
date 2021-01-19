@@ -42,9 +42,7 @@ namespace ApiTestProject.UnitTests
             Authorization.TokenAuthorization(_request, Token);
 
             _user = new User {Name = inputName, Gender = inputGender, Email = inputEmail, Status = inputStatus};
-            var json = JsonConvert.SerializeObject(_user);
-            var data = new StringContent(json, Encoding.UTF8, "application/json");
-            _request.Content = data;
+            _request.Content = JsonParser.SerializeUser(_user);
 
             _httpResponse = _client.SendAsync(_request);
             var responseResult = _httpResponse.Result.Content.ReadAsStringAsync().Result;
@@ -66,9 +64,7 @@ namespace ApiTestProject.UnitTests
             var inputNewStatus = "Inactive";
 
             var updatedUser = new User() {Name = _user.Name, Gender = _user.Gender, Email = _user.Email, Status = inputNewStatus};
-            var json = JsonConvert.SerializeObject(updatedUser);
-            var data = new StringContent(json, Encoding.UTF8, "application/json");
-            _request.Content = data;
+            _request.Content = JsonParser.SerializeUser(_user);
 
             _httpResponse = _client.SendAsync(_request);
 
@@ -149,9 +145,7 @@ namespace ApiTestProject.UnitTests
             var inputStatus = "Active";
 
             _user = new User {Name = inputName, Gender = inputGender, Email = inputEmail, Status = inputStatus};
-            var json = JsonConvert.SerializeObject(_user);
-            var data = new StringContent(json, Encoding.UTF8, "application/json");
-            _request.Content = data;
+            _request.Content = JsonParser.SerializeUser(_user);
 
             _httpResponse = _client.SendAsync(_request);
 
@@ -171,9 +165,7 @@ namespace ApiTestProject.UnitTests
             Authorization.TokenAuthorization(_request, Token);
 
             _user = new User {Name = "Alexandra", Gender = "Female", Email = "Alexandra@mail.ru", Status = "Active"};
-            var json = JsonConvert.SerializeObject(_user);
-            var data = new StringContent(json, Encoding.UTF8, "application/json");
-            _request.Content = data;
+            _request.Content = JsonParser.SerializeUser(_user);
 
             _httpResponse = _client.SendAsync(_request);
 
