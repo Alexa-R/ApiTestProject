@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using ApiTestProject.Helpers;
 using ApiTestProject.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
@@ -15,7 +16,7 @@ namespace ApiTestProject.UnitTests
         private HttpRequestMessage _request;
         private Task<HttpResponseMessage> _httpResponse;
         private const string Token = "Bearer 58bf693b4ba9cf357c3b6b8a0744bc2f9edd9a42cd8228f3c4d0ddd64c42f6ba";
-        private User _user = null;
+        private User _user;
 
         [TestInitialize]
         public void InitializeTest()
@@ -39,7 +40,7 @@ namespace ApiTestProject.UnitTests
         public void CreateUserTest(string inputName, string inputGender, string inputEmail, string inputStatus)
         {
             _request = new HttpRequestMessage(HttpMethod.Post, EndPoints.UserAll);
-            _request.Headers.Add("Authorization", Token);
+           Authorization.TokenAuthorization(_request, Token);
 
             _user = new User { Name = inputName, Gender = inputGender, Email = inputEmail, Status = inputStatus };
             var json = JsonConvert.SerializeObject(_user);
@@ -62,7 +63,7 @@ namespace ApiTestProject.UnitTests
             _user = CreateUser();
 
             _request = new HttpRequestMessage(HttpMethod.Put, string.Format(EndPoints.UserById, _user.Id));
-            _request.Headers.Add("Authorization", Token);
+            Authorization.TokenAuthorization(_request, Token);
 
             var inputNewStatus = "Inactive";
 
@@ -87,7 +88,7 @@ namespace ApiTestProject.UnitTests
             _user = CreateUser();
 
             _request = new HttpRequestMessage(HttpMethod.Delete, string.Format(EndPoints.UserById, _user.Id));
-            _request.Headers.Add("Authorization", Token);
+            Authorization.TokenAuthorization(_request, Token);
 
             _httpResponse = _client.SendAsync(_request);
 
@@ -165,7 +166,7 @@ namespace ApiTestProject.UnitTests
         private User CreateUser()
         {
             _request = new HttpRequestMessage(HttpMethod.Post, EndPoints.UserAll);
-            _request.Headers.Add("Authorization", Token);
+            Authorization.TokenAuthorization(_request, Token);
 
             _user = new User {Name = "Alexandra", Gender = "Female", Email = "Alexandra@mail.ru", Status = "Active"};
             var json = JsonConvert.SerializeObject(_user);
@@ -185,7 +186,7 @@ namespace ApiTestProject.UnitTests
         private void DeleteUser(int id)
         {
             _request = new HttpRequestMessage(HttpMethod.Delete, string.Format(EndPoints.UserById, id));
-            _request.Headers.Add("Authorization", Token);
+            Authorization.TokenAuthorization(_request, Token);
 
             _httpResponse = _client.SendAsync(_request);
             var jsonRootObject =
