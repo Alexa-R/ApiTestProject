@@ -49,8 +49,6 @@ namespace ApiTestProject.UnitTests
             var jsonRootObject = JsonConvert.DeserializeObject<JsonRootObjectWithOneUser>(responseResult);
 
             Assert.Equal(201, jsonRootObject.Code);
-
-            DeleteUser(jsonRootObject.Data.Id);
         }
 
         [Fact]
@@ -68,14 +66,9 @@ namespace ApiTestProject.UnitTests
 
             _httpResponse = _client.SendAsync(_request);
 
-            var jsonRootObject =
-                JsonConvert.DeserializeObject<JsonRootObjectWithOneUser>(_httpResponse.Result.Content
-                    .ReadAsStringAsync()
-                    .Result);
+            var jsonRootObject = JsonParser.DeserializeHttpResponse(_httpResponse);
 
             Assert.Equal(200, jsonRootObject.Code);
-
-            DeleteUser(_user.Id);
         }
 
         [Fact]
@@ -88,10 +81,7 @@ namespace ApiTestProject.UnitTests
 
             _httpResponse = _client.SendAsync(_request);
 
-            var jsonRootObject =
-                JsonConvert.DeserializeObject<JsonRootObjectWithOneUser>(_httpResponse.Result.Content
-                    .ReadAsStringAsync()
-                    .Result);
+            var jsonRootObject = JsonParser.DeserializeHttpResponse(_httpResponse);
 
             Assert.Equal(204, jsonRootObject.Code);
         }
@@ -104,16 +94,11 @@ namespace ApiTestProject.UnitTests
             _httpResponse = _client.GetAsync(string.Format(EndPoints.UserById, _user.Id));
             var responseData = _httpResponse.Result.Content.ReadAsStringAsync().Result;
 
-            var jsonRootObject =
-                JsonConvert.DeserializeObject<JsonRootObjectWithOneUser>(_httpResponse.Result.Content
-                    .ReadAsStringAsync()
-                    .Result);
+            var jsonRootObject = JsonParser.DeserializeHttpResponse(_httpResponse);
 
             _testOutputHelper.WriteLine(responseData);
 
             Assert.Equal(200, jsonRootObject.Code);
-
-            DeleteUser(_user.Id);
         }
 
         [Fact]
@@ -124,10 +109,7 @@ namespace ApiTestProject.UnitTests
             _httpResponse = _client.GetAsync(string.Format(EndPoints.UserById, id));
             var responseData = _httpResponse.Result.Content.ReadAsStringAsync().Result;
 
-            var jsonRootObject =
-                JsonConvert.DeserializeObject<JsonRootObjectWithOneUser>(_httpResponse.Result.Content
-                    .ReadAsStringAsync()
-                    .Result);
+            var jsonRootObject = JsonParser.DeserializeHttpResponse(_httpResponse);
 
             _testOutputHelper.WriteLine(responseData);
 
@@ -149,14 +131,9 @@ namespace ApiTestProject.UnitTests
 
             _httpResponse = _client.SendAsync(_request);
 
-            var jsonRootObject =
-                JsonConvert.DeserializeObject<JsonRootObjectWithOneUser>(_httpResponse.Result.Content
-                    .ReadAsStringAsync()
-                    .Result);
+            var jsonRootObject = JsonParser.DeserializeHttpResponse(_httpResponse);
 
             Assert.Equal(401, jsonRootObject.Code);
-
-            DeleteUser(jsonRootObject.Data.Id);
         }
 
         private User CreateUser()
@@ -164,15 +141,12 @@ namespace ApiTestProject.UnitTests
             _request = new HttpRequestMessage(HttpMethod.Post, EndPoints.UserAll);
             Authorization.TokenAuthorization(_request, Token);
 
-            _user = new User {Name = "Alexandra", Gender = "Female", Email = "Alexandra@mail.ru", Status = "Active"};
+            _user = new User {Name = "Ale", Gender = "Female", Email = "Ale@mail.ru", Status = "Active"};
             _request.Content = JsonParser.SerializeUser(_user);
 
             _httpResponse = _client.SendAsync(_request);
 
-            var jsonRootObject =
-                JsonConvert.DeserializeObject<JsonRootObjectWithOneUser>(_httpResponse.Result.Content
-                    .ReadAsStringAsync()
-                    .Result);
+            var jsonRootObject = JsonParser.DeserializeHttpResponse(_httpResponse);
 
             return jsonRootObject.Data;
         }
@@ -183,10 +157,7 @@ namespace ApiTestProject.UnitTests
             Authorization.TokenAuthorization(_request, Token);
 
             _httpResponse = _client.SendAsync(_request);
-            var jsonRootObject =
-                JsonConvert.DeserializeObject<JsonRootObjectWithOneUser>(_httpResponse.Result.Content
-                    .ReadAsStringAsync()
-                    .Result);
+            var jsonRootObject = JsonParser.DeserializeHttpResponse(_httpResponse);
         }
     }
 }
