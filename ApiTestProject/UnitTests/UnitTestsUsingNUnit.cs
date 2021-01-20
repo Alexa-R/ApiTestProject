@@ -28,6 +28,7 @@ namespace ApiTestProject.UnitTests
             if (_user != null)
             {
                 DeleteUser(_user.Id);
+                _user = null;
             }
             _client.Dispose();
         }
