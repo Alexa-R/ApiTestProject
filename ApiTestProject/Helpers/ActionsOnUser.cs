@@ -19,6 +19,7 @@ namespace ApiTestProject.Helpers
 
             return jsonRootObject;
         }
+
         public static int GetUserById(Task<HttpResponseMessage> httpResponse, HttpClient client, int id)
         {
             httpResponse = client.GetAsync(string.Format(EndPoints.UserById, id));
