@@ -114,6 +114,7 @@
     <Compile Include="EndPoints.cs" />
     <Compile Include="Helpers\Authorization.cs" />
     <Compile Include="Helpers\JsonParser.cs" />
+    <Compile Include="Helpers\ActionsOnUser.cs" />
     <Compile Include="Model\JsonRootObjectWithOneUser.cs" />
     <Compile Include="Model\Meta.cs" />
     <Compile Include="Model\Pagination.cs" />

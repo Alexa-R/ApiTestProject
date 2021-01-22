@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using ApiTestProject.Helpers;
 using ApiTestProject.Model;
@@ -27,24 +26,23 @@ namespace ApiTestProject.UnitTests
         {
             if (_user != null)
             {
-                DeleteUser(_user.Id);
+                var statusCode = ActionsOnUser.GetUserById(_httpResponse, _client, _user.Id);
+                if (statusCode == 200)
+                {
+                    ActionsOnUser.DeleteUser(_request, Token, _httpResponse, _client, _user.Id);
+                }
+
                 _user = null;
             }
+
             _client.Dispose();
         }
 
         [Test]
         public void CreateUserTest()
         {
-            _request = new HttpRequestMessage(HttpMethod.Post, EndPoints.UserAll);
-            Authorization.TokenAuthorization(_request, Token);
-
-            _user = new User { Name = "Lizy", Gender = "Female", Email = "Lizy@mail.ru", Status = "Active" };
-            _request.Content = JsonParser.SerializeUser(_user);
-            _httpResponse = _client.SendAsync(_request);
-
-            var jsonRootObject = JsonParser.DeserializeHttpResponse(_httpResponse);
-            _user.Id = jsonRootObject.Data.Id;
+            var jsonRootObject = ActionsOnUser.CreateUser(_request, Token, _user, _httpResponse, _client);
+            _user = jsonRootObject.Data;
 
             Assert.AreEqual(201, jsonRootObject.Code);
         }
@@ -52,7 +50,8 @@ namespace ApiTestProject.UnitTests
         [Test]
         public void UpdateUserTest()
         {
-            _user = CreateUser();
+            var jsonRootObject = ActionsOnUser.CreateUser(_request, Token, _user, _httpResponse, _client);
+            _user = jsonRootObject.Data;
 
             _request = new HttpRequestMessage(HttpMethod.Put, string.Format(EndPoints.UserById, _user.Id));
             Authorization.TokenAuthorization(_request, Token);
@@ -62,7 +61,7 @@ namespace ApiTestProject.UnitTests
             _request.Content = JsonParser.SerializeUser(updatedUser);
             _httpResponse = _client.SendAsync(_request);
 
-            var jsonRootObject = JsonParser.DeserializeHttpResponse(_httpResponse);
+            jsonRootObject = JsonParser.DeserializeHttpResponse(_httpResponse);
 
             Assert.AreEqual(200, jsonRootObject.Code);
         }
@@ -70,41 +69,32 @@ namespace ApiTestProject.UnitTests
         [Test]
         public void DeleteUserTest()
         {
-            _user = CreateUser();
+            var jsonRootObject = ActionsOnUser.CreateUser(_request, Token, _user, _httpResponse, _client);
+            _user = jsonRootObject.Data;
 
-            _request = new HttpRequestMessage(HttpMethod.Delete, string.Format(EndPoints.UserById, _user.Id));
-            Authorization.TokenAuthorization(_request, Token);
-            _httpResponse = _client.SendAsync(_request);
+            var statusCode = ActionsOnUser.DeleteUser(_request, Token, _httpResponse, _client, _user.Id);
 
-            var jsonRootObject = JsonParser.DeserializeHttpResponse(_httpResponse);
-
-            Assert.AreEqual(204, jsonRootObject.Code);
+            Assert.AreEqual(204, statusCode);
         }
 
         [Test]
         public void GetUserByIdTest()
         {
-            _user = CreateUser();
-            _httpResponse = _client.GetAsync(string.Format(EndPoints.UserById, _user.Id));
-            var responseData = _httpResponse.Result.Content.ReadAsStringAsync().Result;
+            var jsonRootObject = ActionsOnUser.CreateUser(_request, Token, _user, _httpResponse, _client);
+            _user = jsonRootObject.Data;
 
-            var jsonRootObject = JsonParser.DeserializeHttpResponse(_httpResponse);
-            Console.WriteLine(responseData);
+            var statusCode = ActionsOnUser.GetUserById(_httpResponse, _client, _user.Id);
 
-            Assert.AreEqual(200, jsonRootObject.Code);
+            Assert.AreEqual(200, statusCode);
         }
 
         [Test]
         public void GetUserByFakeIdTest()
         {
             var id = 1234567890;
-            _httpResponse = _client.GetAsync(string.Format(EndPoints.UserById, id));
-            var responseData = _httpResponse.Result.Content.ReadAsStringAsync().Result;
+            var statusCode = ActionsOnUser.GetUserById(_httpResponse, _client, id);
 
-            var jsonRootObject = JsonParser.DeserializeHttpResponse(_httpResponse);
-            Console.WriteLine(responseData);
-
-            Assert.AreEqual(404, jsonRootObject.Code);
+            Assert.AreEqual(404, statusCode);
         }
 
         [Test]
@@ -120,29 +110,6 @@ namespace ApiTestProject.UnitTests
             _user.Id = jsonRootObject.Data.Id;
 
             Assert.AreEqual(401, jsonRootObject.Code);
-        }
-
-        private User CreateUser()
-        {
-            _request = new HttpRequestMessage(HttpMethod.Post, EndPoints.UserAll);
-            Authorization.TokenAuthorization(_request, Token);
-
-            _user = new User { Name = "John", Gender = "Female", Email = "John@mail.ru", Status = "Active" };
-            _request.Content = JsonParser.SerializeUser(_user);
-            _httpResponse = _client.SendAsync(_request);
-
-            var jsonRootObject = JsonParser.DeserializeHttpResponse(_httpResponse);
-
-            return jsonRootObject.Data;
-        }
-
-        private void DeleteUser(int id)
-        {
-            _request = new HttpRequestMessage(HttpMethod.Delete, string.Format(EndPoints.UserById, id));
-            Authorization.TokenAuthorization(_request, Token);
-            _httpResponse = _client.SendAsync(_request);
-
-            JsonParser.DeserializeHttpResponse(_httpResponse);
         }
     }
 }
