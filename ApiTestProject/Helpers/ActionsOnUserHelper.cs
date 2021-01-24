@@ -18,6 +18,18 @@ namespace ApiTestProject.Helpers
 
             return jsonRootObject;
         }
+        public static JsonRootObjectWithOneUser CreateUserWithoutToken(HttpClient client)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, EndPoints.UserAll);
+
+            var user = new User { Name = "Vika", Gender = "Female", Email = "Vika@mail.ru", Status = "Active" };
+            request.Content = JsonParserHelper.SerializeUser(user);
+            var httpResponse = client.SendAsync(request);
+
+            var jsonRootObject = JsonParserHelper.DeserializeHttpResponse(httpResponse);
+
+            return jsonRootObject;
+        }
 
         public static JsonRootObjectWithOneUser UpdateUser(string token, HttpClient client)
         {

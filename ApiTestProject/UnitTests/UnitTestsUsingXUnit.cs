@@ -88,14 +88,8 @@ namespace ApiTestProject.UnitTests
         [Fact]
         public void CreateUserWithoutTokenTest()
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, EndPoints.UserAll);
-
-            _user = new User { Name = "Vika", Gender = "Female", Email = "Vika@mail.ru", Status = "Active" };
-            request.Content = JsonParserHelper.SerializeUser(_user);
-            var httpResponse = _client.SendAsync(request);
-
-            var jsonRootObject = JsonParserHelper.DeserializeHttpResponse(httpResponse);
-            _user.Id = jsonRootObject.Data.Id;
+            var jsonRootObject = ActionsOnUserHelper.CreateUserWithoutToken(_client);
+            _user = jsonRootObject.Data;
 
             Assert.Equal(401, jsonRootObject.Code);
         }
