@@ -10,8 +10,6 @@ namespace ApiTestProject.UnitTests
     public class UnitTestsUsingMsTest
     {
         private HttpClient _client;
-        private HttpRequestMessage _request;
-        private Task<HttpResponseMessage> _httpResponse;
         private const string Token = "Bearer 58bf693b4ba9cf357c3b6b8a0744bc2f9edd9a42cd8228f3c4d0ddd64c42f6ba";
         private User _user;
 
@@ -53,15 +51,15 @@ namespace ApiTestProject.UnitTests
             var jsonRootObject = ActionsOnUserHelper.CreateUser(Token, _client);
             _user = jsonRootObject.Data;
 
-            _request = new HttpRequestMessage(HttpMethod.Put, string.Format(EndPoints.UserById, _user.Id));
-            AuthorizationHelper.TokenAuthorization(_request, Token);
+            var request = new HttpRequestMessage(HttpMethod.Put, string.Format(EndPoints.UserById, _user.Id));
+            AuthorizationHelper.TokenAuthorization(request, Token);
 
             var inputNewStatus = "Inactive";
             var updatedUser = new User() { Name = _user.Name, Gender = _user.Gender, Email = _user.Email, Status = inputNewStatus };
-            _request.Content = JsonParserHelper.SerializeUser(updatedUser);
-            _httpResponse = _client.SendAsync(_request);
+            request.Content = JsonParserHelper.SerializeUser(updatedUser);
+            var httpResponse = _client.SendAsync(request);
 
-            jsonRootObject = JsonParserHelper.DeserializeHttpResponse(_httpResponse);
+            jsonRootObject = JsonParserHelper.DeserializeHttpResponse(httpResponse);
 
             Assert.AreEqual(200, jsonRootObject.Code);
         }
@@ -100,13 +98,13 @@ namespace ApiTestProject.UnitTests
         [TestMethod]
         public void CreateUserWithoutTokenTest()
         {
-            _request = new HttpRequestMessage(HttpMethod.Post, EndPoints.UserAll);
+            var request = new HttpRequestMessage(HttpMethod.Post, EndPoints.UserAll);
             
             _user = new User { Name = "Vika", Gender = "Female", Email = "Vika@mail.ru", Status = "Active" };
-            _request.Content = JsonParserHelper.SerializeUser(_user);
-            _httpResponse = _client.SendAsync(_request);
+            request.Content = JsonParserHelper.SerializeUser(_user);
+            var httpResponse = _client.SendAsync(request);
 
-            var jsonRootObject = JsonParserHelper.DeserializeHttpResponse(_httpResponse);
+            var jsonRootObject = JsonParserHelper.DeserializeHttpResponse(httpResponse);
             _user.Id = jsonRootObject.Data.Id;
 
             Assert.AreEqual(401, jsonRootObject.Code);
