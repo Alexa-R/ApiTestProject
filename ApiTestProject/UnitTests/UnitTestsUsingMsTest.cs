@@ -26,10 +26,10 @@ namespace ApiTestProject.UnitTests
         {
             if (_user != null)
             {
-                var statusCode = ActionsOnUserHelper.GetUserById(_httpResponse, _client, _user.Id);
+                var statusCode = ActionsOnUserHelper.GetUserById(_client, _user.Id);
                 if (statusCode == 200)
                 {
-                    ActionsOnUserHelper.DeleteUser(_request, Token, _httpResponse, _client, _user.Id);
+                    ActionsOnUserHelper.DeleteUser(Token, _client, _user.Id);
                 }
 
                 _user = null;
@@ -41,7 +41,7 @@ namespace ApiTestProject.UnitTests
         [TestMethod]
         public void CreateUserTest()
         {
-            var jsonRootObject = ActionsOnUserHelper.CreateUser(_request, Token, _user, _httpResponse, _client);
+            var jsonRootObject = ActionsOnUserHelper.CreateUser(Token, _client);
             _user = jsonRootObject.Data;
 
             Assert.AreEqual(201, jsonRootObject.Code);
@@ -50,7 +50,7 @@ namespace ApiTestProject.UnitTests
         [TestMethod]
         public void UpdateUserTest()
         {
-            var jsonRootObject = ActionsOnUserHelper.CreateUser(_request, Token, _user, _httpResponse, _client);
+            var jsonRootObject = ActionsOnUserHelper.CreateUser(Token, _client);
             _user = jsonRootObject.Data;
 
             _request = new HttpRequestMessage(HttpMethod.Put, string.Format(EndPoints.UserById, _user.Id));
@@ -69,10 +69,10 @@ namespace ApiTestProject.UnitTests
         [TestMethod]
         public void DeleteUserTest()
         {
-            var jsonRootObject = ActionsOnUserHelper.CreateUser(_request, Token, _user, _httpResponse, _client);
+            var jsonRootObject = ActionsOnUserHelper.CreateUser(Token, _client);
             _user = jsonRootObject.Data;
 
-            var statusCode = ActionsOnUserHelper.DeleteUser(_request, Token, _httpResponse, _client, _user.Id);
+            var statusCode = ActionsOnUserHelper.DeleteUser(Token, _client, _user.Id);
 
             Assert.AreEqual(204, statusCode);
         }
@@ -80,10 +80,10 @@ namespace ApiTestProject.UnitTests
         [TestMethod]
         public void GetUserByIdTest()
         {
-            var jsonRootObject = ActionsOnUserHelper.CreateUser(_request, Token, _user, _httpResponse, _client);
+            var jsonRootObject = ActionsOnUserHelper.CreateUser(Token, _client);
             _user = jsonRootObject.Data;
 
-            var statusCode = ActionsOnUserHelper.GetUserById(_httpResponse, _client, _user.Id);
+            var statusCode = ActionsOnUserHelper.GetUserById(_client, _user.Id);
 
             Assert.AreEqual(200, statusCode);
         }
@@ -92,7 +92,7 @@ namespace ApiTestProject.UnitTests
         public void GetUserByFakeIdTest()
         {
             var id = 1234567890;
-            var statusCode = ActionsOnUserHelper.GetUserById(_httpResponse, _client, id);
+            var statusCode = ActionsOnUserHelper.GetUserById(_client, id);
 
             Assert.AreEqual(404, statusCode);
         }
