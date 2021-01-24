@@ -48,18 +48,8 @@ namespace ApiTestProject.UnitTests
         [Fact]
         public void UpdateUserTest()
         {
-            var jsonRootObject = ActionsOnUserHelper.CreateUser(Token, _client);
+            var jsonRootObject = ActionsOnUserHelper.UpdateUser(Token, _client);
             _user = jsonRootObject.Data;
-
-            _request = new HttpRequestMessage(HttpMethod.Put, string.Format(EndPoints.UserById, _user.Id));
-            AuthorizationHelper.TokenAuthorization(_request, Token);
-
-            var inputNewStatus = "Inactive";
-            var updatedUser = new User() { Name = _user.Name, Gender = _user.Gender, Email = _user.Email, Status = inputNewStatus };
-            _request.Content = JsonParserHelper.SerializeUser(updatedUser);
-            _httpResponse = _client.SendAsync(_request);
-
-            jsonRootObject = JsonParserHelper.DeserializeHttpResponse(_httpResponse);
 
             Assert.Equal(200, jsonRootObject.Code);
         }
