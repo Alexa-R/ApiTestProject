@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace ApiTestProject.Helpers
 {
-    public static class JsonParser
+    public static class JsonParserHelper
     {
         public static StringContent SerializeUser(User user)
         {

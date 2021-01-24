@@ -4,18 +4,18 @@ using ApiTestProject.Model;
 
 namespace ApiTestProject.Helpers
 {
-    public static class ActionsOnUser
+    public static class ActionsOnUserHelper
     {
         public static JsonRootObjectWithOneUser CreateUser(HttpRequestMessage request, string token, User user, Task<HttpResponseMessage> httpResponse, HttpClient client)
         {
             request = new HttpRequestMessage(HttpMethod.Post, EndPoints.UserAll);
-            Authorization.TokenAuthorization(request, token);
+            AuthorizationHelper.TokenAuthorization(request, token);
 
             user = new User { Name = "Amela", Gender = "Female", Email = "Amela@mail.ru", Status = "Active" };
-            request.Content = JsonParser.SerializeUser(user);
+            request.Content = JsonParserHelper.SerializeUser(user);
             httpResponse = client.SendAsync(request);
 
-            var jsonRootObject = JsonParser.DeserializeHttpResponse(httpResponse);
+            var jsonRootObject = JsonParserHelper.DeserializeHttpResponse(httpResponse);
 
             return jsonRootObject;
         }
@@ -23,7 +23,7 @@ namespace ApiTestProject.Helpers
         public static int GetUserById(Task<HttpResponseMessage> httpResponse, HttpClient client, int id)
         {
             httpResponse = client.GetAsync(string.Format(EndPoints.UserById, id));
-            var jsonRootObject = JsonParser.DeserializeHttpResponse(httpResponse);
+            var jsonRootObject = JsonParserHelper.DeserializeHttpResponse(httpResponse);
 
             return jsonRootObject.Code;
         }
@@ -31,10 +31,10 @@ namespace ApiTestProject.Helpers
         public static int DeleteUser(HttpRequestMessage request, string token, Task<HttpResponseMessage> httpResponse, HttpClient client, int id)
         {
             request = new HttpRequestMessage(HttpMethod.Delete, string.Format(EndPoints.UserById, id));
-            Authorization.TokenAuthorization(request, token);
+            AuthorizationHelper.TokenAuthorization(request, token);
             httpResponse = client.SendAsync(request);
 
-            var jsonRootObject = JsonParser.DeserializeHttpResponse(httpResponse);
+            var jsonRootObject = JsonParserHelper.DeserializeHttpResponse(httpResponse);
 
             return jsonRootObject.Code;
         }

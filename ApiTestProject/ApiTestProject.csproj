@@ -112,9 +112,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EndPoints.cs" />
-    <Compile Include="Helpers\Authorization.cs" />
-    <Compile Include="Helpers\JsonParser.cs" />
-    <Compile Include="Helpers\ActionsOnUser.cs" />
+    <Compile Include="Helpers\AuthorizationHelper.cs" />
+    <Compile Include="Helpers\JsonParserHelper.cs" />
+    <Compile Include="Helpers\ActionsOnUserHelper.cs" />
     <Compile Include="Model\JsonRootObjectWithOneUser.cs" />
     <Compile Include="Model\Meta.cs" />
     <Compile Include="Model\Pagination.cs" />

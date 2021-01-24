@@ -2,7 +2,7 @@
 
 namespace ApiTestProject.Helpers
 {
-    public static class Authorization
+    public static class AuthorizationHelper
     {
         public static void TokenAuthorization(HttpRequestMessage request, string token)
         {
