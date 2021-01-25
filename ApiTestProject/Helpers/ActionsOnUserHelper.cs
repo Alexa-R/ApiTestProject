@@ -18,6 +18,7 @@ namespace ApiTestProject.Helpers
 
             return jsonRootObject;
         }
+
         public static JsonRootObjectWithOneUser CreateUserWithoutToken(HttpClient client)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, EndPoints.UserAll);
