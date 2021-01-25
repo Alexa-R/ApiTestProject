@@ -72,7 +72,7 @@ namespace ApiTestProject.UnitTests
         [TestMethod]
         public void GetUserByFakeIdTest()
         {
-            _user = new User{ Id = 1234567890 };
+            _user = new User { Id = 1234567890 };
             var statusCode = ActionsOnUserHelper.GetUserById(_client, _user.Id);
 
             Assert.AreEqual(404, statusCode);
