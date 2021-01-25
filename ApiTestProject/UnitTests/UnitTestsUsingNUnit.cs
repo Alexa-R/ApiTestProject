@@ -1,5 +1,4 @@
 ﻿using System.Net.Http;
-using System.Threading.Tasks;
 using ApiTestProject.Helpers;
 using ApiTestProject.Model;
 using NUnit.Framework;
@@ -22,15 +21,9 @@ namespace ApiTestProject.UnitTests
         [TearDown]
         public void CleanUpTest()
         {
-            if (_user != null)
+            if (ActionsOnUserHelper.GetUserById(_client, _user.Id) == 200)
             {
-                var statusCode = ActionsOnUserHelper.GetUserById(_client, _user.Id);
-                if (statusCode == 200)
-                {
-                    ActionsOnUserHelper.DeleteUser(Token, _client, _user.Id);
-                }
-
-                _user = null;
+                ActionsOnUserHelper.DeleteUser(Token, _client, _user.Id);
             }
 
             _client.Dispose();
@@ -79,8 +72,8 @@ namespace ApiTestProject.UnitTests
         [Test]
         public void GetUserByFakeIdTest()
         {
-            var id = 1234567890;
-            var statusCode = ActionsOnUserHelper.GetUserById(_client, id);
+            _user = new User { Id = 1234567890 };
+            var statusCode = ActionsOnUserHelper.GetUserById(_client, _user.Id);
 
             Assert.AreEqual(404, statusCode);
         }

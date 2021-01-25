@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net.Http;
-using System.Threading.Tasks;
 using ApiTestProject.Helpers;
 using ApiTestProject.Model;
 using Xunit;
@@ -10,8 +9,6 @@ namespace ApiTestProject.UnitTests
     public class UnitTestsUsingXUnit : IDisposable
     {
         private HttpClient _client;
-        private HttpRequestMessage _request;
-        private Task<HttpResponseMessage> _httpResponse;
         private const string Token = "Bearer 58bf693b4ba9cf357c3b6b8a0744bc2f9edd9a42cd8228f3c4d0ddd64c42f6ba";
         private User _user;
 
@@ -22,15 +19,9 @@ namespace ApiTestProject.UnitTests
 
         public void Dispose()
         {
-            if (_user != null)
+            if (ActionsOnUserHelper.GetUserById(_client, _user.Id) == 200)
             {
-                var statusCode = ActionsOnUserHelper.GetUserById(_client, _user.Id);
-                if (statusCode == 200)
-                {
-                    ActionsOnUserHelper.DeleteUser(Token, _client, _user.Id);
-                }
-
-                _user = null;
+                ActionsOnUserHelper.DeleteUser(Token, _client, _user.Id);
             }
 
             _client.Dispose();
@@ -79,8 +70,8 @@ namespace ApiTestProject.UnitTests
         [Fact]
         public void GetUserByFakeIdTest()
         {
-            var id = 1234567890;
-            var statusCode = ActionsOnUserHelper.GetUserById(_client, id);
+            _user = new User { Id = 1234567890 };
+            var statusCode = ActionsOnUserHelper.GetUserById(_client, _user.Id);
 
             Assert.Equal(404, statusCode);
         }
